@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require('mongoose');
 const config = require('./config/database');
 const path = require('path'); 
+const router = express.Router();
+const authentication = require('./routes/authentication')(router);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.uri, (err) => {
@@ -16,6 +18,7 @@ mongoose.connect(config.uri, (err) => {
 
 // Provide static directory for frontend
 app.use(express.static(__dirname + '/client/dist/client'));
+app.use('/authentication', authentication);
 
 // Connect server to Angular 2 Index.html
 app.get('*', (req, res) => {

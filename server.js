@@ -5,6 +5,7 @@ const config = require('./config/database');
 const path = require('path'); 
 const router = express.Router();
 const authentication = require('./routes/authentication')(router);
+const bodyParser = require('body-parser');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.uri, (err) => {
@@ -16,11 +17,17 @@ mongoose.connect(config.uri, (err) => {
   }
 });
 
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json());
+
 // Provide static directory for frontend
 app.use(express.static(__dirname + '/client/dist/client'));
 app.use('/authentication', authentication);
 
-// Connect server to Angular 2 Index.html
+// Connect server to Angular Index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname + '/client/dist/client/index.html'));
 });

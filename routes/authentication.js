@@ -5,8 +5,27 @@ module.exports =(router) => {
         if(!req.body.email){
             res.json({ success: false, message: 'You must provide an e-mail'});
         } else {
-            console.log(req.body);
-            res.send('Hello word');
+            if(!req.body.username){
+                res.json({ success: false, message : 'You must provide a username'});
+            }else {
+                if(!req.body.password){
+                    res.json( {success: false, message: 'You must provide a password'})
+                }
+                else{
+                    let user = new User({
+                        username: req.body.username.toLowerCase(),
+                        email: req.body.email.toLowerCase(),
+                        password: req.body.password,
+                    });
+                    user.save((err)=> {
+                        if(err){
+                            res.json({success: false, message: 'Could not save User. Error: ', err});
+                        }else {
+                            res.json({ success: true, message: 'User Saved'})
+                        }
+                    })
+                }
+            }
         }
     });
     return router;

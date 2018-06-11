@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -11,8 +12,13 @@ export class RegisterComponent implements OnInit {
 
   form: FormGroup;
 
+  message;
+  messageClass;
+
+
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private authService: AuthService
   ) {
     this.createForm(); // Create Angular 2 Form when component loads
   }
@@ -96,7 +102,22 @@ export class RegisterComponent implements OnInit {
 
   // Function to submit form
   onRegisterSubmit() {
-    console.log('form submitted');
+    const user = {
+      username: this.form.get('username').value,
+      email: this.form.get('email').value,
+      password: this.form.get('password').value,
+    }
+
+    this.authService.registerUser(user).subscribe(data => {
+      //console.log(data);
+      if(!data.success){
+        this.messageClass = 'alert alert-danger';
+        this.message = data.message
+      }else {
+        this.messageClass = 'alert alert-success';
+        this.message = data.message
+      }
+    });
   }
 
   ngOnInit() {
